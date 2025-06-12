@@ -19,19 +19,21 @@ class game_2048:
                            [0, 0, 0, 0],
                            [0, 0, 0, 0],
                            [0, 0, 0, 0]]
-    
-        self.valid_locations = {1:(0,0), 2:(0,1), 3:(0,2), 4:(0,3),
-                                5:(1,0), 6:(1,1), 7:(1,2), 8:(1,3),
-                                9:(2,0)}
-        
-        self.invalid_locations = dict()
-        
-    def start_game():
-        pass
-        
-    
-    def print_board(self):
 
+        self.valid_locations = {'A':(0,0), 'B':(0,1), 'C':(0,2), 'D':(0,3),
+                                'E':(1,0), 'F':(1,1), 'G':(1,2), 'H':(1,3),
+                                'I':(2,0), 'J':(2,1), 'K':(2,2), 'L':(2,3),
+                                'M':(3,0), 'N':(3,1), 'O':(3,2), 'P':(3,3)}
+
+        self.invalid_locations = dict()
+
+    def init_game():
+        pass
+
+    def run_game():
+        pass
+
+    def print_board(self):
         row_line = "{:->34}".format("\n")  #len of row line is 33. set to 34 to accommadate newline esc seq
         grid_cell = "|{:^7}".format("")
 
@@ -39,6 +41,12 @@ class game_2048:
         board = f"{grid_row}{grid_row}{grid_row}{grid_row}{row_line}"
 
         print(board)
+
+    def check_game_status(self):
+        pass
+
+    def place_item(self):
+        pass
 
     def shift_up(self):
         pass
@@ -52,10 +60,5 @@ class game_2048:
     def shift_left(self):
         pass
 
-    def check_game_status(self):
-        pass
 
-
-
-
-#game_2048().print_board()
+# game_2048().print_board()
