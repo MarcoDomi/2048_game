@@ -1,6 +1,5 @@
 from enum import Enum
-
-GAME_STATUS = Enum('GAME_STATUS', [("IN-PROGRESS", 0), ("WIN", 1), ("LOSE", 2)])
+import random 
 
 class GAME_STATUS(Enum):
     NOT_STARTED = 0
@@ -12,25 +11,27 @@ class game_2048:
 
     GAMEBOARD_DIM = 4
 
-    def __init__(self):
+    def __init__(self): #sets an uninitialized state for game
         self.tile_count = 0
         self.game_state = GAME_STATUS.NOT_STARTED
-        self.game_board = [[0, 0, 0, 0],
+        self.game_board = [[0, 0, 0, 0], #empty cells represented by 0. might change to empty string later
                            [0, 0, 0, 0],
                            [0, 0, 0, 0],
                            [0, 0, 0, 0]]
 
-        self.valid_locations = {'A':(0,0), 'B':(0,1), 'C':(0,2), 'D':(0,3),
+        self.valid_locations = {'A':(0,0), 'B':(0,1), 'C':(0,2), 'D':(0,3), #all empty locations on gameboard
                                 'E':(1,0), 'F':(1,1), 'G':(1,2), 'H':(1,3),
                                 'I':(2,0), 'J':(2,1), 'K':(2,2), 'L':(2,3),
                                 'M':(3,0), 'N':(3,1), 'O':(3,2), 'P':(3,3)}
 
-        self.invalid_locations = dict()
+        self.invalid_locations = dict() #when location is filled it is popped from valid_locations and place here
 
-    def init_game():
-        pass
+    def init_game(self):
+        #randomly place 2 tiles
+        self.game_state = GAME_STATUS.IN_PROGRESS
 
-    def run_game():
+
+    def run_game(self):
         pass
 
     def print_board(self):
@@ -45,8 +46,15 @@ class game_2048:
     def check_game_status(self):
         pass
 
-    def place_item(self):
-        pass
+    def place_item(self, num):
+        keylist = list(self.valid_locations.keys())
+        index = random.randint(0, len(keylist)-1)
+        chosenKey = keylist[index]
+
+        location = self.valid_locations.pop(chosenKey)
+        self.invalid_locations[chosenKey] = location
+        
+        self.game_board[location[0]][location[1]] = num
 
     def shift_up(self):
         pass
@@ -61,4 +69,8 @@ class game_2048:
         pass
 
 
-# game_2048().print_board()
+gg = game_2048()
+
+gg.place_item(4)
+print(gg.game_board)
+
