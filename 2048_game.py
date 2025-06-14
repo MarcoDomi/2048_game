@@ -28,10 +28,16 @@ class game_2048:
 
     def init_game(self):
         # randomly place 2 tiles
-        self.game_state = GAME_STATUS.IN_PROGRESS
-
+        start_values = [2,4]
+        start_value1, start_value2 = random.choices(start_values, weights=[3,1],k=2) #make weighted random choice between 2 and 4.  
+                                                                                     #return list of two randomly chosen values where 2 has higher weight.
+        self.place_item(start_value1)
+        self.place_item(start_value2)
 
     def run_game(self):
+        self.init_game()
+        self.game_state = GAME_STATUS.IN_PROGRESS
+        self.print_board()
         pass
 
     def print_board(self):
@@ -73,5 +79,4 @@ class game_2048:
 
 gg = game_2048()
 
-gg.place_item(2048)
-gg.print_board()
+gg.run_game()
