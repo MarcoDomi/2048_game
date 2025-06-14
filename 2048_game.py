@@ -14,10 +14,10 @@ class game_2048:
     def __init__(self): #sets an uninitialized state for game
         self.tile_count = 0
         self.game_state = GAME_STATUS.NOT_STARTED
-        self.game_board = [[0, 0, 0, 0], #empty cells represented by 0. might change to empty string later
-                           [0, 0, 0, 0],
-                           [0, 0, 0, 0],
-                           [0, 0, 0, 0]]
+        self.game_board = [['', '', '', ''], #empty cells represented by empty strings.
+                           ['', '', '', ''],
+                           ['', '', '', ''],
+                           ['', '', '', '']]
 
         self.valid_locations = {'A':(0,0), 'B':(0,1), 'C':(0,2), 'D':(0,3), #all empty locations on gameboard
                                 'E':(1,0), 'F':(1,1), 'G':(1,2), 'H':(1,3),
@@ -27,19 +27,26 @@ class game_2048:
         self.invalid_locations = dict() #when location is filled it is popped from valid_locations and place here
 
     def init_game(self):
-        #randomly place 2 tiles
+        # randomly place 2 tiles
         self.game_state = GAME_STATUS.IN_PROGRESS
-
 
     def run_game(self):
         pass
 
     def print_board(self):
-        row_line = "{:->34}".format("\n")  #len of row line is 33. set to 34 to accommadate newline esc seq
-        grid_cell = "|{:^7}".format("")
+        row_line = "{:->34}".format("\n")       #len of row line is 33. set to 34 to accommadate newline esc seq
+        board = []
+        for i in range(game_2048.GAMEBOARD_DIM):#
+            grid_row = [row_line]
+            for j in range(game_2048.GAMEBOARD_DIM):  
+                value = self.game_board[i][j]
+                grid_cell = "{:^7}".format(value)
+                grid_row.append(grid_cell)
+            grid_row.append("\n")
+            board.append("|".join(grid_row))
 
-        grid_row = f"{row_line}{grid_cell}{grid_cell}{grid_cell}{grid_cell}|\n"
-        board = f"{grid_row}{grid_row}{grid_row}{grid_row}{row_line}"
+        board.append(row_line)
+        board = "".join(board)
 
         print(board)
 
@@ -53,7 +60,7 @@ class game_2048:
 
         location = self.valid_locations.pop(chosenKey)
         self.invalid_locations[chosenKey] = location
-        
+
         self.game_board[location[0]][location[1]] = num
 
     def shift_up(self):
@@ -72,5 +79,4 @@ class game_2048:
 gg = game_2048()
 
 gg.place_item(4)
-print(gg.game_board)
-
+gg.print_board()
