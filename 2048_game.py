@@ -37,17 +37,11 @@ class game_2048:
         row_line = "{:->34}".format("\n")       #len of row line is 33. set to 34 to accommadate newline esc seq
         board = []
         for i in range(game_2048.GAMEBOARD_DIM):#
-            grid_row = [row_line]
-            for j in range(game_2048.GAMEBOARD_DIM):  
-                value = self.game_board[i][j]
-                grid_cell = "{:^7}".format(value)
-                grid_row.append(grid_cell)
-            grid_row.append("\n")
-            board.append("|".join(grid_row))
+            grid_row = "{}|{:^7}|{:^7}|{:^7}|{:^7}|".format(row_line,*self.game_board[i])
+            board.append(grid_row)
 
         board.append(row_line)
-        board = "".join(board)
-
+        board = "\n".join(board)
         print(board)
 
     def check_game_status(self):
@@ -78,5 +72,5 @@ class game_2048:
 
 gg = game_2048()
 
-gg.place_item(4)
+gg.place_item(2048)
 gg.print_board()
