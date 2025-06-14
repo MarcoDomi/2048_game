@@ -19,12 +19,12 @@ class game_2048:
                            ['', '', '', ''],
                            ['', '', '', '']]
 
-        self.valid_locations = {'A':(0,0), 'B':(0,1), 'C':(0,2), 'D':(0,3), #all empty locations on gameboard
+        self.empty_locations = {'A':(0,0), 'B':(0,1), 'C':(0,2), 'D':(0,3), #all empty locations on gameboard
                                 'E':(1,0), 'F':(1,1), 'G':(1,2), 'H':(1,3),
                                 'I':(2,0), 'J':(2,1), 'K':(2,2), 'L':(2,3),
                                 'M':(3,0), 'N':(3,1), 'O':(3,2), 'P':(3,3)}
 
-        self.invalid_locations = dict() #when location is filled it is popped from valid_locations and place here
+        self.occupied_locations = dict() #when location is filled it is popped from empty_locations and place here
 
     def init_game(self):
         # randomly place 2 tiles
@@ -55,12 +55,12 @@ class game_2048:
         pass
 
     def place_item(self, num): #TODO add a fail state for when there are no more valid locations
-        keylist = list(self.valid_locations.keys())
+        keylist = list(self.empty_locations.keys())
         index = random.randint(0, len(keylist)-1)
         chosenKey = keylist[index]
 
-        location = self.valid_locations.pop(chosenKey)
-        self.invalid_locations[chosenKey] = location
+        location = self.empty_locations.pop(chosenKey)
+        self.occupied_locations[chosenKey] = location
 
         self.game_board[location[0]][location[1]] = num
 
