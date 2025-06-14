@@ -30,24 +30,25 @@ class game_2048:
         # randomly place 2 tiles
         self.game_state = GAME_STATUS.IN_PROGRESS
 
+
     def run_game(self):
         pass
 
     def print_board(self):
         row_line = "{:->34}".format("\n")       #len of row line is 33. set to 34 to accommadate newline esc seq
-        board = []
-        for i in range(game_2048.GAMEBOARD_DIM):#
-            grid_row = "{}|{:^7}|{:^7}|{:^7}|{:^7}|".format(row_line,*self.game_board[i])
-            board.append(grid_row)
+        board = []                              #esc seq is left aligned
+        for i in range(game_2048.GAMEBOARD_DIM):#iterate thru each row in board
+            grid_row = "{}|{:^7}|{:^7}|{:^7}|{:^7}|".format(row_line,*self.game_board[i]) #use string format to insert row_line and four game_board values
+            board.append(grid_row)                                                        #use unpack operator to unpack each row in game_board
 
-        board.append(row_line)
-        board = "\n".join(board)
+        board.append(row_line)   #append last row_line onto bottom of board
+        board = "\n".join(board) 
         print(board)
 
     def check_game_status(self):
         pass
 
-    def place_item(self, num):
+    def place_item(self, num): #TODO add a fail state for when there are no more valid locations
         keylist = list(self.valid_locations.keys())
         index = random.randint(0, len(keylist)-1)
         chosenKey = keylist[index]
