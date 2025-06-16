@@ -9,7 +9,8 @@ class GAME_STATUS(Enum):
 
 class game_2048:
 
-    GAMEBOARD_DIM = 4
+    GAMEBOARD_ROW = 4
+    GAMEBOARD_COL = 4
 
     def __init__(self): #sets an uninitialized state for game
         self.tile_count = 0
@@ -19,12 +20,12 @@ class game_2048:
                            ['', '', '', ''],
                            ['', '', '', '']]
 
-        self.empty_locations = {'A':(0,0), 'B':(0,1), 'C':(0,2), 'D':(0,3), #all empty locations on gameboard
-                                'E':(1,0), 'F':(1,1), 'G':(1,2), 'H':(1,3),
-                                'I':(2,0), 'J':(2,1), 'K':(2,2), 'L':(2,3),
+        self.empty_locations = {'A':(0,0), 'B':(0,1), 'C':(0,2), 'D':(0,3), #occupied spots are removed from empty_locations 
+                                'E':(1,0), 'F':(1,1), 'G':(1,2), 'H':(1,3), #this limits possible locations when placing new value 
+                                'I':(2,0), 'J':(2,1), 'K':(2,2), 'L':(2,3), 
                                 'M':(3,0), 'N':(3,1), 'O':(3,2), 'P':(3,3)}
 
-        self.occupied_locations = dict() #when location is filled it is popped from empty_locations and place here
+        self.occupied_locations = dict() #when location is filled its removed from empty_locations and place here
 
     def init_game(self):
         # randomly place 2 tiles
@@ -43,7 +44,7 @@ class game_2048:
     def print_board(self):
         row_line = "{:->34}".format("\n")       #len of row line is 33. set to 34 to accommadate newline esc seq
         board = []                              #esc seq is left aligned
-        for i in range(game_2048.GAMEBOARD_DIM):#iterate thru each row in board
+        for i in range(game_2048.GAMEBOARD_ROW):#iterate thru each row in board
             grid_row = "{}|{:^7}|{:^7}|{:^7}|{:^7}|".format(row_line,*self.game_board[i]) #use string format to insert row_line and four game_board values
             board.append(grid_row)                                                        #use unpack operator to unpack each row in game_board
 
@@ -57,15 +58,26 @@ class game_2048:
     def place_item(self, num): #TODO add a fail state for when there are no more valid locations
         keylist = list(self.empty_locations.keys())
         index = random.randint(0, len(keylist)-1)
-        chosenKey = keylist[index]
 
-        location = self.empty_locations.pop(chosenKey)
-        self.occupied_locations[chosenKey] = location
+        key = keylist[index]
+        location = self.empty_locations.pop(key)
 
+        self.occupied_locations[key] = location
         self.game_board[location[0]][location[1]] = num
 
     def shift_up(self):
-        pass
+        for col in range(game_2048.GAMEBOARD_COL): #iterate thru e/ column in gameboard
+            empty_cells = 0 #number of consecutive empty cells
+            for col_cell in range(game_2048.GAMEBOARD_ROW): #iterate thru e/ cell in current column
+                if self.game_board[col_cell][col] == '':    
+                    empty_cells += 1
+                elif empty_cells > 0:
+                    new_cell = col_cell - empty_cells #calculate new position of current value #might result in negative value
+
+                    current_value = self.game_board[col_cell][col]
+                    self.game_board[new_cell][col] = current_value #set new location to current value
+                    self.game_board[col_cell][col] = ''            #set old location to empty
+
 
     def shift_down(self):
         pass
@@ -80,3 +92,8 @@ class game_2048:
 gg = game_2048()
 
 gg.run_game()
+
+choice = int(input("1: shift up "))
+if choice == 1:
+    gg.shift_up()
+    gg.print_board()
