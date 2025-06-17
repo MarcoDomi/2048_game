@@ -20,13 +20,13 @@ class game_2048:
                            ['', '', '', ''],
                            ['', '', '', '']]
 
-        self.empty_locations = {'A':(0,0), 'B':(0,1), 'C':(0,2), 'D':(0,3), #occupied spots are removed from empty_locations 
-                                'E':(1,0), 'F':(1,1), 'G':(1,2), 'H':(1,3), #this limits possible locations when placing new value 
-                                'I':(2,0), 'J':(2,1), 'K':(2,2), 'L':(2,3), 
-                                'M':(3,0), 'N':(3,1), 'O':(3,2), 'P':(3,3)}
+        self.empty_locations = {(0,0):(0,0), (0,1):(0,1), (0,2):(0,2), (0,3):(0,3), #empty locations are removed when value is inserted
+                                (1,0):(1,0), (1,1):(1,1), (1,2):(1,2), (1,3):(1,3), #this limits possible locations when placing new value 
+                                (2,0):(2,0), (2,1):(2,1), (2,2):(2,2), (2,3):(2,3), 
+                                (3,0):(3,0), (3,1):(3,1), (3,2):(3,2), (3,3):(3,3)}
 
         self.occupied_locations = dict() #when location is filled its removed from empty_locations and place here
-
+                                         #might remove
     def init_game(self):
         # randomly place 2 tiles
         start_values = [2,4]
