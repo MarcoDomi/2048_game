@@ -21,7 +21,7 @@ class game_2048:
                            ['', '', '', '']]
 
         self.empty_locations = {(0,0):(0,0), (0,1):(0,1), (0,2):(0,2), (0,3):(0,3), #empty locations are removed when value is inserted
-                                (1,0):(1,0), (1,1):(1,1), (1,2):(1,2), (1,3):(1,3), #this limits possible locations when placing new value 
+                                (1,0):(1,0), (1,1):(1,1), (1,2):(1,2), (1,3):(1,3), #randomly chosen locations will always be empty
                                 (2,0):(2,0), (2,1):(2,1), (2,2):(2,2), (2,3):(2,3), 
                                 (3,0):(3,0), (3,1):(3,1), (3,2):(3,2), (3,3):(3,3)}
 
@@ -68,15 +68,20 @@ class game_2048:
     def shift_up(self):
         for col in range(game_2048.GAMEBOARD_COL): #iterate thru e/ column in gameboard
             empty_cells = 0 #number of consecutive empty cells
-            for col_cell in range(game_2048.GAMEBOARD_ROW): #iterate thru e/ cell in current column
-                if self.game_board[col_cell][col] == '':    
+            for current_cell in range(game_2048.GAMEBOARD_ROW): #iterate thru e/ cell in current column
+                if self.game_board[current_cell][col] == '':    
                     empty_cells += 1
                 elif empty_cells > 0:
-                    new_cell = col_cell - empty_cells #calculate new position of current value #might result in negative value
+                    new_cell = current_cell - empty_cells #calculate new position of current value #might result in negative value
 
-                    current_value = self.game_board[col_cell][col]
+                    current_value = self.game_board[current_cell][col]
                     self.game_board[new_cell][col] = current_value #set new location to current value
-                    self.game_board[col_cell][col] = ''            #set old location to empty
+                    self.game_board[current_cell][col] = ''        #set old location to empty
+
+                    #update cell availability
+                    self.empty_locations[(current_cell, col)] = self.occupied_locations.pop((current_cell, col))
+                    self.occupied_locations[(new_cell, col)] = self.empty_locations.pop((new_cell, col))
+                    
 
 
     def shift_down(self):
