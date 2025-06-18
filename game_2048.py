@@ -67,23 +67,36 @@ class game_2048:
 
     def shift_up(self):
         for col in range(game_2048.GAMEBOARD_COL): #iterate thru e/ column in gameboard
-            empty_cells = 0 #number of consecutive empty cells
+            shift_count = 0 #number of spaces to move element
+            prev_value = None
+            prev_cell = None
             for current_cell in range(game_2048.GAMEBOARD_ROW): #iterate thru e/ cell in current column
-                if self.game_board[current_cell][col] == '':    
-                    empty_cells += 1
-                elif empty_cells > 0:
-                    new_cell = current_cell - empty_cells #calculate new position of current value #might result in negative value
+                current_value = self.game_board[current_cell][col]
 
-                    current_value = self.game_board[current_cell][col]
-                    self.game_board[new_cell][col] = current_value #set new location to current value
-                    self.game_board[current_cell][col] = ''        #set old location to empty
+                if prev_value == current_value:
+                    self.game_board[current_cell][col] = '' #remove current value
+                    shift_count += 1
 
-                    #update cell availability
-                    self.empty_locations[(current_cell, col)] = self.occupied_locations.pop((current_cell, col))
-                    self.occupied_locations[(new_cell, col)] = self.empty_locations.pop((new_cell, col))
+                    prev_value *= 2
+                    self.game_board[prev_cell][col] = prev_value 
+
+                elif current_value == '':  #if board location is empty add 1 to shift_count
+                    shift_count += 1
+
+                else:
+                    new_cell = current_cell - shift_count  #might result in negative value
+
+                    if new_cell != current_cell: #ensures values on end of board are not removed
+                        self.game_board[new_cell][col] = current_value #set new location to current value
+                        self.game_board[current_cell][col] = ''        #set old location to empty
+
+                        #update cell availability
+                        self.empty_locations[(current_cell, col)] = self.occupied_locations.pop((current_cell, col))
+                        self.occupied_locations[(new_cell, col)] = self.empty_locations.pop((new_cell, col))
+
+                    prev_value = current_value
+                    prev_cell = new_cell
                     
-
-
     def shift_down(self):
         pass
 
@@ -94,11 +107,4 @@ class game_2048:
         pass
 
 
-gg = game_2048()
 
-gg.run_game()
-
-choice = int(input("1: shift up "))
-if choice == 1:
-    gg.shift_up()
-    gg.print_board()
