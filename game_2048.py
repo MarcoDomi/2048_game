@@ -65,7 +65,7 @@ class game_2048:
         self.occupied_locations[key] = location
         self.game_board[location[0]][location[1]] = num
 
-    def shift_up(self):
+    def shift_values(self):
         for col in range(game_2048.GAMEBOARD_COL): #iterate thru e/ column in gameboard
             shift_count = 0 #number of spaces to move element
             prev_value = None

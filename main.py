@@ -6,6 +6,6 @@ gg.run_game()
 
 choice = int(input("1: shift up "))
 if choice == 1:
-    gg.shift_up()
+    gg.shift_values()
     #gg.shift_up()
     gg.print_board()
