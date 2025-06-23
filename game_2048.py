@@ -73,20 +73,18 @@ class game_2048:
             for current_cell in range(game_2048.GAMEBOARD_ROW): #iterate thru e/ cell in current column
                 current_value = self.game_board[current_cell][col]
 
-                if prev_value == current_value:
-                    self.game_board[current_cell][col] = '' #remove current value
-                    emptySpace_count += 1
-
-                    prev_value *= 2
-                    self.game_board[prev_cell][col] = prev_value 
-
-                elif current_value == '':  #if board location is empty add 1 to empty space
+                if current_value == '':  #if board location is empty add 1 to empty space
                     emptySpace_count += 1
 
                 else:
-                    new_cell = current_cell - emptySpace_count  # MIGHT RESULT IN NEGATIVE VALUE
+                    if prev_value == current_value:
+                        self.game_board[current_cell][col] = '' #remove current value #TODO mark as empty in dictionary
+                        emptySpace_count += 1
 
-                    if new_cell != current_cell: #ensures values on end of board are not removed
+                        prev_value *= 2
+                        self.game_board[prev_cell][col] = prev_value 
+                    else:
+                        new_cell = current_cell - emptySpace_count  # MIGHT RESULT IN NEGATIVE VALUE
                         self.game_board[new_cell][col] = current_value #set new location to current value
                         self.game_board[current_cell][col] = ''        #set old location to empty
 
