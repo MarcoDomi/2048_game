@@ -67,7 +67,7 @@ class game_2048:
 
     def shift_values(self):
         for col in range(game_2048.GAMEBOARD_COL): #iterate thru e/ column in gameboard
-            shift_count = 0 #number of spaces to move element
+            emptySpace_count = 0 #number of empty spaces in column
             prev_value = None
             prev_cell = None
             for current_cell in range(game_2048.GAMEBOARD_ROW): #iterate thru e/ cell in current column
@@ -75,16 +75,16 @@ class game_2048:
 
                 if prev_value == current_value:
                     self.game_board[current_cell][col] = '' #remove current value
-                    shift_count += 1
+                    emptySpace_count += 1
 
                     prev_value *= 2
                     self.game_board[prev_cell][col] = prev_value 
 
-                elif current_value == '':  #if board location is empty add 1 to shift_count
-                    shift_count += 1
+                elif current_value == '':  #if board location is empty add 1 to empty space
+                    emptySpace_count += 1
 
                 else:
-                    new_cell = current_cell - shift_count  #might result in negative value
+                    new_cell = current_cell - emptySpace_count  # MIGHT RESULT IN NEGATIVE VALUE
 
                     if new_cell != current_cell: #ensures values on end of board are not removed
                         self.game_board[new_cell][col] = current_value #set new location to current value
@@ -101,11 +101,9 @@ class game_2048:
         self.shift_values()
 
     def shift_left(self):
-        degrees = 90
-        rotated_board = self.rotate_board(90)
-        rotated_board = self.shift_values()
-
-        self.game_board = self.rotate_board()
+        self.rotate_board(90)
+        self.shift_values()
+        self.rotate_board(-90)
 
     def shift_down(self):
         degrees = 180
@@ -129,6 +127,4 @@ class game_2048:
                 rotated_board = list(zip(*reverse_board))
                 degree_rotated -= 90
 
-        rotated_board = [list(row) for row in rotated_board]
-
-        return rotated_board
+        self.game_board = [list(row) for row in rotated_board]
