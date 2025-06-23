@@ -16,13 +16,13 @@ class game_2048:
         self.tile_count = 0
         self.game_state = GAME_STATUS.NOT_STARTED
         self.game_board = [['', '', '', ''], #empty cells represented by empty strings.
-                           ['', '', '', ''],
+                           ['', '', '', ''], 
                            ['', '', '', ''],
                            ['', '', '', '']]
 
         self.empty_locations = {(0,0):(0,0), (0,1):(0,1), (0,2):(0,2), (0,3):(0,3), #empty locations are removed when value is inserted
                                 (1,0):(1,0), (1,1):(1,1), (1,2):(1,2), (1,3):(1,3), #randomly chosen locations will always be empty
-                                (2,0):(2,0), (2,1):(2,1), (2,2):(2,2), (2,3):(2,3), 
+                                (2,0):(2,0), (2,1):(2,1), (2,2):(2,2), (2,3):(2,3), #may change value to tile value at that location
                                 (3,0):(3,0), (3,1):(3,1), (3,2):(3,2), (3,3):(3,3)}
 
         self.occupied_locations = dict() #when location is filled its removed from empty_locations and place here
@@ -96,7 +96,10 @@ class game_2048:
 
                     prev_value = current_value
                     prev_cell = new_cell
-                    
+
+    def shift_up(self):
+        self.shift_values()
+            
     def shift_down(self):
         pass
 
@@ -106,5 +109,24 @@ class game_2048:
     def shift_left(self):
         pass
 
+    def rotate_board(self, degree):
+        degree_rotated = 0
+        rotated_board = self.game_board
+        
+        if degree > 0:
+            while degree_rotated != degree:
+                transpose_board = list(zip(*rotated_board))
+                rotated_board = [row[::-1] for row in transpose_board]
+                degree_rotated += 90
+                
+        elif degree < 0:
+            while degree_rotated != degree:
+                reverse_board = [row[::-1] for row in rotated_board]
+                rotated_board = list(zip(*reverse_board))
+                degree_rotated -= 90
 
+        rotated_board = [list(row) for row in rotated_board]
+
+        return rotated_board
+        
 
