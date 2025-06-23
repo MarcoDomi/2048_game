@@ -26,12 +26,12 @@ class game_2048:
                                 (3,0):(3,0), (3,1):(3,1), (3,2):(3,2), (3,3):(3,3)}
 
         self.occupied_locations = dict() #when location is filled its removed from empty_locations and place here
-                                         #might remove
+        # might remove
     def init_game(self):
         # randomly place 2 tiles
         start_values = [2,4]
         start_value1, start_value2 = random.choices(start_values, weights=[3,1],k=2) #make weighted random choice between 2 and 4.  
-                                                                                     #return list of two randomly chosen values where 2 has higher weight.
+        # return list of two randomly chosen values where 2 has higher weight.
         self.place_item(start_value1)
         self.place_item(start_value2)
 
@@ -90,7 +90,7 @@ class game_2048:
                         self.game_board[new_cell][col] = current_value #set new location to current value
                         self.game_board[current_cell][col] = ''        #set old location to empty
 
-                        #update cell availability
+                        # update cell availability
                         self.empty_locations[(current_cell, col)] = self.occupied_locations.pop((current_cell, col))
                         self.occupied_locations[(new_cell, col)] = self.empty_locations.pop((new_cell, col))
 
@@ -99,26 +99,30 @@ class game_2048:
 
     def shift_up(self):
         self.shift_values()
-            
-    def shift_down(self):
-        pass
-
-    def shift_right(self):
-        pass
 
     def shift_left(self):
-        pass
+        degrees = 90
+        rotated_board = self.rotate_board(90)
+        rotated_board = self.shift_values()
+
+        self.game_board = self.rotate_board()
+
+    def shift_down(self):
+        degrees = 180
+
+    def shift_right(self):
+        degrees = -90
 
     def rotate_board(self, degree):
         degree_rotated = 0
         rotated_board = self.game_board
-        
+
         if degree > 0:
             while degree_rotated != degree:
                 transpose_board = list(zip(*rotated_board))
                 rotated_board = [row[::-1] for row in transpose_board]
                 degree_rotated += 90
-                
+
         elif degree < 0:
             while degree_rotated != degree:
                 reverse_board = [row[::-1] for row in rotated_board]
@@ -128,5 +132,3 @@ class game_2048:
         rotated_board = [list(row) for row in rotated_board]
 
         return rotated_board
-        
-
