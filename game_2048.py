@@ -83,25 +83,35 @@ class game_2048:
 
                         prev_value *= 2
                         self.game_board[prev_cell][col] = prev_value 
-                    else:
+                    elif emptySpace_count > 0:
                         new_cell = current_cell - emptySpace_count  # MIGHT RESULT IN NEGATIVE VALUE
                         self.game_board[new_cell][col] = current_value #set new location to current value
-                        self.game_board[current_cell][col] = ''        #set old location to empty
-
-                        # update cell availability
-                        self.empty_locations[(current_cell, col)] = self.occupied_locations.pop((current_cell, col))
-                        self.occupied_locations[(new_cell, col)] = self.empty_locations.pop((new_cell, col))
+                        self.game_board[current_cell][col] = ''        #set old location to empt
+                        prev_cell = new_cell
 
                     prev_value = current_value
-                    prev_cell = new_cell
+
+    def update_locations(self): #dont like this method but will have to stick with it for now... :(
+        self.empty_locations = dict()
+        self.occupied_locations = dict()
+
+        for row in range(self.GAMEBOARD_ROW):
+            for col in range(self.GAMEBOARD_COL):
+                coord = (row, col)
+                if self.game_board[row][col] == '':
+                    self.empty_locations[coord] = coord
+                else:
+                    self.occupied_locations[coord] = coord
 
     def shift_direction(self, degrees):
         self.rotate_board(degrees)
         self.shift_values()
         self.rotate_board(-degrees)
+        self.update_locations() 
 
     def shift_up(self):
-        self.shift_values()
+        degrees = 0
+        self.shift_direction(degrees)
 
     def shift_left(self):
         degrees = 90

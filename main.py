@@ -3,17 +3,18 @@ gg = game_2048()
 
 gg.run_game()
 
-choice = int(input("enter Choice "))
-if choice == 1:
-    gg.shift_up()
+while True:
+    choice = input("enter Choice ")
+    if choice == 'w':
+        gg.shift_up()
 
-elif choice == 2:
-    gg.shift_left()
+    elif choice == 'a':
+        gg.shift_left()
 
-elif choice == 3:
-    gg.shift_down()
+    elif choice == 's':
+        gg.shift_down()
 
-elif choice == 4:
-    gg.shift_right()
-    
-gg.print_board()
+    elif choice == 'd':
+        gg.shift_right()
+        
+    gg.print_board()
