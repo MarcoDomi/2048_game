@@ -6,10 +6,14 @@ gg.run_game()
 choice = int(input("enter Choice "))
 if choice == 1:
     gg.shift_up()
-    gg.print_board()
 
 elif choice == 2:
     gg.shift_left()
-    gg.print_board()
 
+elif choice == 3:
+    gg.shift_down()
 
+elif choice == 4:
+    gg.shift_right()
+    
+gg.print_board()

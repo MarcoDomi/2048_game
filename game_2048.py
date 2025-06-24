@@ -13,7 +13,7 @@ class game_2048:
     GAMEBOARD_COL = 4
 
     def __init__(self): #sets an uninitialized state for game
-        self.tile_count = 0
+        self.board_degrees = 0 #degree of rotation of board
         self.game_state = GAME_STATUS.NOT_STARTED
         self.game_board = [['', '', '', ''], #empty cells represented by empty strings.
                            ['', '', '', ''], 
@@ -95,19 +95,25 @@ class game_2048:
                     prev_value = current_value
                     prev_cell = new_cell
 
+    def shift_direction(self, degrees):
+        self.rotate_board(degrees)
+        self.shift_values()
+        self.rotate_board(-degrees)
+
     def shift_up(self):
         self.shift_values()
 
     def shift_left(self):
-        self.rotate_board(90)
-        self.shift_values()
-        self.rotate_board(-90)
+        degrees = 90
+        self.shift_direction(degrees)
 
     def shift_down(self):
         degrees = 180
+        self.shift_direction(degrees)
 
     def shift_right(self):
         degrees = -90
+        self.shift_direction(degrees)
 
     def rotate_board(self, degree):
         degree_rotated = 0
@@ -126,3 +132,4 @@ class game_2048:
                 degree_rotated -= 90
 
         self.game_board = [list(row) for row in rotated_board]
+        self.board_degrees = degree
