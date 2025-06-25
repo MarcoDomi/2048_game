@@ -88,7 +88,8 @@ class game_2048:
                         self.game_board[new_cell][col] = current_value #set new location to current value
                         self.game_board[current_cell][col] = ''        #set old location to empt
                         prev_cell = new_cell
-
+                    else:
+                        prev_cell = current_cell
                     prev_value = current_value
 
     def update_locations(self): #dont like this method but will have to stick with it for now... :(
