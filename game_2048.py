@@ -35,11 +35,34 @@ class game_2048:
         self.place_item(start_value1)
         self.place_item(start_value2)
 
+    def print_game_menu(self):
+        options = ["W - UP", "A - LEFT", "S - DOWN", "D - RIGHT"]
+        print(" | ".join(options))
+
     def run_game(self):
         self.init_game()
         self.game_state = GAME_STATUS.IN_PROGRESS
-        self.print_board()
-        pass
+
+        while self.game_state == GAME_STATUS.IN_PROGRESS:
+            self.print_board()
+            self.print_game_menu()
+            choice = input("Choice: ").lower()
+
+            match choice:
+                case 'w':
+                    self.shift_up()
+                case 'a':
+                    self.shift_left()
+                case 's':
+                    self.shift_down
+                case 'd':
+                    self.shift_right()
+
+            
+                
+
+
+        
 
     def print_board(self):
         row_line = "{:->34}".format("\n")       #len of row line is 33. set to 34 to accommadate newline esc seq
