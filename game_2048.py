@@ -54,9 +54,12 @@ class game_2048:
                 case 'a':
                     self.shift_left()
                 case 's':
-                    self.shift_down
+                    self.shift_down()
                 case 'd':
                     self.shift_right()
+            
+            self.place_item(random.choice([2,4]))
+            #check game status
 
             
                 
