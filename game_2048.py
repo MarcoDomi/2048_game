@@ -81,7 +81,7 @@ class game_2048:
     def check_game_status(self):
         pass
 
-    def place_item(self, num): #TODO add a fail state for when there are no more valid locations
+    def place_item(self, num): 
         keylist = list(self.empty_locations.keys())
         index = random.randint(0, len(keylist)-1)
 
@@ -107,8 +107,8 @@ class game_2048:
                         self.game_board[current_cell][col] = '' #remove current value #TODO mark as empty in dictionary
                         emptySpace_count += 1
 
-                        prev_value *= 2
-                        self.game_board[prev_cell][col] = prev_value 
+                        current_value *= 2
+                        self.game_board[prev_cell][col] = current_value 
                     elif emptySpace_count > 0:
                         new_cell = current_cell - emptySpace_count  # MIGHT RESULT IN NEGATIVE VALUE
                         self.game_board[new_cell][col] = current_value #set new location to current value
