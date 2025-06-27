@@ -27,7 +27,7 @@ class game_2048:
 
         self.occupied_locations = dict() #when location is filled its removed from empty_locations and place here
         self.recent_value = 0 #value that was most recently doubled when converging values
-        
+
     def init_game(self):
         # randomly place 2 tiles
         start_values = [2,4]
@@ -83,7 +83,9 @@ class game_2048:
         print(board)
 
     def check_game_status(self):
-        pass
+        if self.recent_value == 2048:
+            self.game_state = GAME_STATUS.WIN
+        
 
     def place_item(self, num): 
         keylist = list(self.empty_locations.keys())
@@ -107,7 +109,7 @@ class game_2048:
                     emptySpace_count += 1
 
                 else:
-                    if prev_value == current_value:
+                    if current_value == prev_value:
                         self.game_board[current_cell][col] = '' #remove current value #TODO mark as empty in dictionary
                         emptySpace_count += 1
 
