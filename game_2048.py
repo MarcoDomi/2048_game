@@ -57,6 +57,9 @@ class game_2048:
                     self.shift_down()
                 case 'd':
                     self.shift_right()
+                case _:
+                    print("ERROR: Invalid choice")
+                    continue
             
             self.place_item(random.choice([2,4]))
             #check game status
