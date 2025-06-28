@@ -42,11 +42,18 @@ class game_2048:
         options = ["W - UP", "A - LEFT", "S - DOWN", "D - RIGHT"]
         print(" | ".join(options))
 
-    def matchingNeighbors(self):
-        match_neighbors = False
+    def matchingNeighbors(self): #TODO need to test 
 
         for row in range(self.GAMEBOARD_ROW):
             for col in range(self.GAMEBOARD_COL):
+                current_value = self.game_board[row][col]
+                try:
+                    if  current_value == self.game_board[row][col+1] or current_value == self.game_board[row+1][col]:
+                        return True
+                except IndexError:
+                    continue
+    
+        return False
                 
 
     def check_game_status(self):
@@ -78,6 +85,8 @@ class game_2048:
 
             self.place_item(random.choice([2,4]))
             self.check_game_status()
+
+        self.print_board()
         
         if self.game_state == GAME_STATUS.WIN:
             print("You Reached 2048! Congrats!")
