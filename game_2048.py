@@ -29,6 +29,8 @@ class game_2048:
         self.recent_value = 0 #value that was most recently doubled when converging values
 
     def init_game(self):
+        self.game_state = GAME_STATUS.IN_PROGRESS
+
         # randomly place 2 tiles
         start_values = [2,4]
         start_value1, start_value2 = random.choices(start_values, weights=[3,1],k=2) #make weighted random choice between 2 and 4.  
@@ -40,9 +42,21 @@ class game_2048:
         options = ["W - UP", "A - LEFT", "S - DOWN", "D - RIGHT"]
         print(" | ".join(options))
 
+    def matchingNeighbors(self):
+        match_neighbors = False
+
+        for row in range(self.GAMEBOARD_ROW):
+            for col in range(self.GAMEBOARD_COL):
+                
+
+    def check_game_status(self):
+        if self.recent_value == 2048:
+            self.game_state = GAME_STATUS.WIN
+        elif len(self.empty_locations) == 0 and not self.matchingNeighbors():
+            self.game_state = GAME_STATUS.LOSE
+
     def run_game(self):
         self.init_game()
-        self.game_state = GAME_STATUS.IN_PROGRESS
 
         while self.game_state == GAME_STATUS.IN_PROGRESS:
             self.print_board()
@@ -61,16 +75,15 @@ class game_2048:
                 case _:
                     print("ERROR: Invalid choice")
                     continue
-            
+
             self.place_item(random.choice([2,4]))
-            #check game status
-
-            
-                
-
-
+            self.check_game_status()
         
-
+        if self.game_state == GAME_STATUS.WIN:
+            print("You Reached 2048! Congrats!")
+        elif self.game_state == GAME_STATUS.LOSE:
+            print("You are outta moves! Try Again!")
+            
     def print_board(self):
         row_line = "{:->34}".format("\n")       #len of row line is 33. set to 34 to accommadate newline esc seq
         board = []                              #esc seq is left aligned
@@ -82,9 +95,6 @@ class game_2048:
         board = "\n".join(board) 
         print(board)
 
-    def check_game_status(self):
-        if self.recent_value == 2048:
-            self.game_state = GAME_STATUS.WIN
         
 
     def place_item(self, num): 
