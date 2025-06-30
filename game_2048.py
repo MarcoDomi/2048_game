@@ -69,6 +69,7 @@ class game_2048:
             self.print_board()
             self.print_game_menu()
             choice = input("Choice: ").lower()
+            old_empty_locations = self.empty_locations
 
             match choice:
                 case 'w':
@@ -83,7 +84,8 @@ class game_2048:
                     print("ERROR: Invalid choice")
                     continue
 
-            self.place_item(random.choice([2,4]))
+            if self.empty_locations != old_empty_locations: 
+                self.place_item(random.choice([2,4]))
             self.check_game_status()
 
         self.print_board()
