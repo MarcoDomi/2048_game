@@ -25,7 +25,7 @@ class game_2048:
                                 (2,0):(2,0), (2,1):(2,1), (2,2):(2,2), (2,3):(2,3), #may change value to tile value at that location
                                 (3,0):(3,0), (3,1):(3,1), (3,2):(3,2), (3,3):(3,3)}
 
-        self.occupied_locations = dict() #when location is filled its removed from empty_locations and place here
+        self.value_locations = dict() #when location is filled its removed from empty_locations and place here
         self.recent_value = 0 #value that was most recently doubled when converging values
 
     def init_game(self):
@@ -69,7 +69,7 @@ class game_2048:
             self.print_board()
             self.print_game_menu()
             choice = input("Choice: ").lower()
-            old_empty_locations = self.empty_locations
+            old_value_locations = self.value_locations
 
             match choice:
                 case 'w':
@@ -84,7 +84,7 @@ class game_2048:
                     print("ERROR: Invalid choice")
                     continue
 
-            if self.empty_locations != old_empty_locations: 
+            if self.value_locations != old_value_locations: 
                 self.place_item(random.choice([2,4]))
             self.check_game_status()
 
@@ -115,7 +115,7 @@ class game_2048:
         key = keylist[index]
         location = self.empty_locations.pop(key)
 
-        self.occupied_locations[key] = location
+        self.value_locations[key] = location
         self.game_board[location[0]][location[1]] = num
 
     def shift_values(self):
@@ -148,7 +148,7 @@ class game_2048:
 
     def update_locations(self): #dont like this method but will have to stick with it for now... :(
         self.empty_locations = dict()
-        self.occupied_locations = dict()
+        self.value_locations = dict()
 
         for row in range(self.GAMEBOARD_ROW):
             for col in range(self.GAMEBOARD_COL):
@@ -156,7 +156,7 @@ class game_2048:
                 if self.game_board[row][col] == '':
                     self.empty_locations[coord] = coord
                 else:
-                    self.occupied_locations[coord] = coord
+                    self.value_locations[coord] = coord
 
     def shift_direction(self, degrees):
         self.rotate_board(degrees)
