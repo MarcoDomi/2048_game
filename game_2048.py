@@ -52,9 +52,8 @@ class game_2048:
                         return True
                 except IndexError:
                     continue
-    
+
         return False
-                
 
     def check_game_status(self):
         if self.recent_value == 2048:
@@ -72,7 +71,7 @@ class game_2048:
             old_value_locations = self.value_locations
 
             match choice:
-                case 'w':
+                case "w":
                     self.shift_up()
                 case 'a':
                     self.shift_left()
@@ -89,12 +88,12 @@ class game_2048:
             self.check_game_status()
 
         self.print_board()
-        
+
         if self.game_state == GAME_STATUS.WIN:
             print("You Reached 2048! Congrats!")
         elif self.game_state == GAME_STATUS.LOSE:
             print("You are outta moves! Try Again!")
-            
+
     def print_board(self):
         row_line = "{:->34}".format("\n")       #len of row line is 33. set to 34 to accommadate newline esc seq
         board = []                              #esc seq is left aligned
@@ -105,8 +104,6 @@ class game_2048:
         board.append(row_line)   #append last row_line onto bottom of board
         board = "\n".join(board) 
         print(board)
-
-        
 
     def place_item(self, num): 
         keylist = list(self.empty_locations.keys())
@@ -137,14 +134,17 @@ class game_2048:
                         current_value *= 2
                         self.game_board[prev_cell][col] = current_value 
                         self.recent_value = current_value
+                        prev_cell = None
+                        prev_value = None
                     elif emptySpace_count > 0:
                         new_cell = current_cell - emptySpace_count  # MIGHT RESULT IN NEGATIVE VALUE
                         self.game_board[new_cell][col] = current_value #set new location to current value
                         self.game_board[current_cell][col] = ''        #set old location to empt
                         prev_cell = new_cell
+                        prev_value = current_value
                     else:
                         prev_cell = current_cell
-                    prev_value = current_value
+                        prev_value = current_value
 
     def update_locations(self): #dont like this method but will have to stick with it for now... :(
         self.empty_locations = dict()
