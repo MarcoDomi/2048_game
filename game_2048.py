@@ -42,10 +42,10 @@ class game_2048:
         options = ["W - UP", "A - LEFT", "S - DOWN", "D - RIGHT"]
         print(" | ".join(options))
 
-    def matchingNeighbors(self): #TODO need to test 
+    def check_matchingNeighbors(self): #TODO FIX does not detect matching pair on last column
 
         for row in range(self.GAMEBOARD_ROW):
-            for col in range(self.GAMEBOARD_COL):
+            for col in range(self.GAMEBOARD_COL - 1):
                 current_value = self.game_board[row][col]
                 try:
                     if  current_value == self.game_board[row][col+1] or current_value == self.game_board[row+1][col]:
@@ -53,12 +53,17 @@ class game_2048:
                 except IndexError:
                     continue
 
+        for row in range(self.GAMEBOARD_ROW - 1):
+            current_value = self.game_board[row][-1]
+            if current_value == self.game_board[row+1][-1]:
+                return True
+
         return False
 
     def check_game_status(self):
         if self.recent_value == 2048:
             self.game_state = GAME_STATUS.WIN
-        elif len(self.empty_locations) == 0 and not self.matchingNeighbors():
+        elif len(self.empty_locations) == 0 and not self.check_matchingNeighbors():
             self.game_state = GAME_STATUS.LOSE
 
     def run_game(self):
@@ -106,10 +111,10 @@ class game_2048:
         print(board)
 
     def place_item(self, num): 
-        keylist = list(self.empty_locations.keys())
-        index = random.randint(0, len(keylist)-1)
+        keylist = list(self.empty_locations.keys()) 
+        index = random.randint(0, len(keylist)-1) #pick random index from list of keys
 
-        key = keylist[index]
+        key = keylist[index] #pick random key
         location = self.empty_locations.pop(key)
 
         self.value_locations[key] = location
