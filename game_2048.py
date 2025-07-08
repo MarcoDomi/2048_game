@@ -45,17 +45,17 @@ class game_2048:
     def check_matchingNeighbors(self): #TODO FIX does not detect matching pair on last column
 
         for row in range(self.GAMEBOARD_ROW):
-            for col in range(self.GAMEBOARD_COL - 1):
+            for col in range(self.GAMEBOARD_COL - 1): #does not check last column
                 current_value = self.game_board[row][col]
-                try:
-                    if  current_value == self.game_board[row][col+1] or current_value == self.game_board[row+1][col]:
-                        return True
-                except IndexError:
+                try:    #when checking cells in last col, checking the right neighbor will throw error and skip check for matching bottom neighbor
+                    if current_value == self.game_board[row][col+1] or current_value == self.game_board[row+1][col]: #check bottom and right values for match
+                        return True                                                                                   
+                except IndexError:                                                                                    
                     continue
 
-        for row in range(self.GAMEBOARD_ROW - 1):
+        for row in range(self.GAMEBOARD_ROW - 1): #handle last column as special case
             current_value = self.game_board[row][-1]
-            if current_value == self.game_board[row+1][-1]:
+            if current_value == self.game_board[row+1][-1]: #check current value's bottom neighbor
                 return True
 
         return False
@@ -73,7 +73,7 @@ class game_2048:
             self.print_board()
             self.print_game_menu()
             choice = input("Choice: ").lower()
-            old_value_locations = self.value_locations
+            old_value_locations = self.value_locations #store copy of value locations on board before shifting values
 
             match choice:
                 case "w":
@@ -88,7 +88,7 @@ class game_2048:
                     print("ERROR: Invalid choice")
                     continue
 
-            if self.value_locations != old_value_locations: 
+            if self.value_locations != old_value_locations:#only place new item if value locations have changed after picking a shift direction
                 self.place_item(random.choice([2,4]))
             self.check_game_status()
 
@@ -101,7 +101,7 @@ class game_2048:
 
     def print_board(self):
         row_line = "{:->34}".format("\n")       #len of row line is 33. set to 34 to accommadate newline esc seq
-        board = []                              #esc seq is left aligned
+        board = []                              #esc seq is right aligned
         for i in range(game_2048.GAMEBOARD_ROW):#iterate thru each row in board
             grid_row = "{}|{:^7}|{:^7}|{:^7}|{:^7}|".format(row_line,*self.game_board[i]) #use string format to insert row_line and four game_board values
             board.append(grid_row)                                                        #use unpack operator to unpack each row in game_board
