@@ -110,13 +110,13 @@ class game_2048:
         board = "\n".join(board) 
         print(board)
 
-    def place_item(self, num): 
+    def place_item(self, num):
         keylist = list(self.empty_locations.keys()) 
         index = random.randint(0, len(keylist)-1) #pick random index from list of keys
 
-        key = keylist[index] #pick random key
-        location = self.empty_locations.pop(key)
-
+        key = keylist[index] #stores random key
+        location = self.empty_locations.pop(key) #remove selected key from empty locations
+                                                 #this prevents selecting a location that is filled when randomly choosing a key.
         self.value_locations[key] = location
         self.game_board[location[0]][location[1]] = num
 
@@ -133,28 +133,33 @@ class game_2048:
 
                 else:
                     if current_value == prev_value:
-                        self.game_board[current_cell][col] = '' #remove current value #TODO mark as empty in dictionary
+                        self.game_board[current_cell][col] = '' #remove current value from gameboard
                         emptySpace_count += 1
 
                         current_value *= 2
-                        self.game_board[prev_cell][col] = current_value 
-                        self.recent_value = current_value
-                        prev_cell = None
-                        prev_value = None
+                        self.game_board[prev_cell][col] = current_value #store double current_value at prev_value's location
+                        self.recent_value = current_value 
+                        prev_cell = None  #setting prev_cell and prev_value to none prevents anymore values from converging
+                        prev_value = None #only the current and prev values can converge during a shift nothing else
                     elif emptySpace_count > 0:
-                        new_cell = current_cell - emptySpace_count  # MIGHT RESULT IN NEGATIVE VALUE
+                        new_cell = current_cell - emptySpace_count  #shift current value based on num of empty spaces # MIGHT RESULT IN NEGATIVE VALUE 
                         self.game_board[new_cell][col] = current_value #set new location to current value
-                        self.game_board[current_cell][col] = ''        #set old location to empt
+                        self.game_board[current_cell][col] = ''        #set old location to empty
                         prev_cell = new_cell
                         prev_value = current_value
-                    else:
-                        prev_cell = current_cell
+                    else: #if current value not patch prev_value and no emptyspaces -> update prev_cell and prev_value
+                        prev_cell = current_cell 
                         prev_value = current_value
 
     def update_locations(self): #dont like this method but will have to stick with it for now... :(
+        '''
+        after shifting we un-rotate to board to its normal position at 0 degrees. The coordinates of any changed cells  
+        in the gameboard will now be relative to the board at 0 degrees. This method iterates thru the board and updated the 
+        un-rotated coordinates of each cell in either empty_locations or value_locations
+        '''
         self.empty_locations = dict()
         self.value_locations = dict()
-
+        
         for row in range(self.GAMEBOARD_ROW):
             for col in range(self.GAMEBOARD_COL):
                 coord = (row, col)
@@ -189,13 +194,13 @@ class game_2048:
         degree_rotated = 0
         rotated_board = self.game_board
 
-        if degree > 0:
+        if degree > 0: #for postive degrees: transpose then reverse
             while degree_rotated != degree:
                 transpose_board = list(zip(*rotated_board))
                 rotated_board = [row[::-1] for row in transpose_board]
                 degree_rotated += 90
 
-        elif degree < 0:
+        elif degree < 0: #for negative degrees: reverse then rotate
             while degree_rotated != degree:
                 reverse_board = [row[::-1] for row in rotated_board]
                 rotated_board = list(zip(*reverse_board))
