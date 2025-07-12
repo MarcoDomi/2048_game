@@ -1,20 +1,12 @@
 from enum import Enum
 import random 
 
-class GAME_STATUS(Enum):
-    NOT_STARTED = 0
-    IN_PROGRESS = 1
-    WIN = 2
-    LOSE = 3
-
-class game_2048:
-
+class board_2048:
     GAMEBOARD_ROW = 4
     GAMEBOARD_COL = 4
 
     def __init__(self): #sets an uninitialized state for game
         self.board_degrees = 0 #degree of rotation of board
-        self.game_state = GAME_STATUS.NOT_STARTED
         self.game_board = [['', '', '', ''], #empty cells represented by empty strings.
                            ['', '', '', ''], 
                            ['', '', '', ''],
@@ -27,6 +19,156 @@ class game_2048:
 
         self.value_locations = dict() #when location is filled its removed from empty_locations and place here
         self.recent_value = 0 #value that was most recently doubled when converging values
+
+    def print_board(self):
+        row_line = "{:->34}".format("\n")  # len of row line is 33. set to 34 to accommadate newline esc seq
+        board = []                         # esc seq is right aligned
+
+        for i in range(board_2048.GAMEBOARD_ROW): #iterate thru each row in board
+            grid_row = "{}|{:^7}|{:^7}|{:^7}|{:^7}|".format(row_line, *self.game_board[i]) #use string format to insert row_line and four game_board values
+            board.append(grid_row)                                                         # use unpack operator to unpack each row in game_board
+
+        board.append(row_line)  # append last row_line onto bottom of board
+        board = "\n".join(board)
+        print(board)
+
+    def check_matchingNeighbors(self): #check each cell's right/bottom neighbor for matching values
+        for row in range(self.GAMEBOARD_ROW): 
+            for col in range(self.GAMEBOARD_COL - 1): #does not check last column bc that is a special case
+                current_value = self.game_board[row][col]
+                try: #when checking cells in last col, checking the right neighbor will throw error and skip check for matching bottom neighbor
+                    if current_value == self.game_board[row][col+1] or current_value == self.game_board[row+1][col]: #check bottom and right values for match
+                        return True
+                except IndexError:
+                    continue
+
+        for row in range(self.GAMEBOARD_ROW - 1): #handle last column as special case
+            current_value = self.game_board[row][-1]
+            if current_value == self.game_board[row+1][-1]: #check current value's bottom neighbor
+                return True
+
+        return False
+
+    def place_item(self, num):
+        keylist = list(self.empty_locations.keys())
+        index = random.randint(0, len(keylist)-1) #pick random index from list of keys
+
+        key = keylist[index] #stores random key
+        location = self.empty_locations.pop(key)  #prevents selecting a location that is fileld when randomly choosing a key
+
+        self.value_locations[key] = location
+        self.game_board[location[0]][location[1]] = num
+
+    def shift_values(self):
+        for col in range(game_2048.GAMEBOARD_COL): #iterate thru e/ column in gameboard
+            empty_space_count = 0 #number of empty spaces in column
+            prev_value = None
+            prev_cell = None
+            for current_cell in range(game_2048.GAMEBOARD_ROW): #iterate thru e/ cell in current column
+                current_value = self.game_board[current_cell][col]
+
+                if current_value == '': #if board lcoation is empty add 1 to empty space count
+                    empty_space_count += 1
+
+                else:
+                    if current_value == prev_value:
+                        self.game_board[current_cell][col] = '' #remove current value from gameboard
+                        empty_space_count += 1
+
+                        current_value *= 2
+                        self.game_board[prev_cell][col] = current_value #store double current_value at prev_value's location
+                        self.recent_value = current_value
+                        prev_cell = None  #for any converging value only 2 values may converge at a time
+                        prev_value = None 
+
+                    elif empty_space_count > 0:
+                        new_cell = current_cell - empty_space_count #shift current value based on num of empty spaces
+                        self.game_board[new_cell][col] = current_value #set new location to current value
+                        self.game_board[current_cell][col] = ''        #set old location to empty
+                        prev_cell = new_cell
+                        prev_value = current_value
+                    else: #if current value not match prev_value and 0 empty spaces -> update prev_cell and prev_value
+                        prev_cell = current_cell
+                        prev_value = current_value
+
+    
+
+    def rotate_board(self, degree):
+        degree_rotated = 0
+        rotated_board = self.game_board
+
+        if degree > 0: #for positive degrees: transpose then reverse
+            while degree_rotated != degree:
+                transpose_board = list(zip(*rotated_board))
+                rotated_board = [row[::-1] for row in transpose_board]
+                degree_rotated += 90
+
+        elif degree < 0: #for negative degrees: reverse then rotate
+            while degree_rotated != degree:
+                reverse_board = [row[::-1] for row in rotated_board]
+                rotated_board = list(zip(*reverse_board))
+                degree_rotated -= 90
+
+        self.game_board = [list(row) for row in rotated_board]
+        self.board_degrees = degree
+
+
+
+    def update_location(self): #dont like this method but will have to stick with it for now... :(
+        """
+        after shifting we un-rotate to board to its normal position at 0 degrees. The coordinates of any changed cells
+        in the gameboard will now be relative to the board at 0 degrees. This method iterates thru the board and updated the
+        un-rotated coordinates of each cell in either empty_locations or value_locations
+        """
+        self.empty_locations = dict()
+        self.value_locations = dict()
+
+        for row in range(self.GAMEBOARD_ROW):
+            for col in range(self.GAMEBOARD_COL):
+                coord = (row, col)
+                if self.game_board[row][col] == '':
+                    self.empty_locations[coord] = coord
+                else:
+                    self.value_locations[coord] = coord
+
+    def shift_direction(self, degrees):
+        self.rotate_board(degrees)
+        self.shift_values()
+        self.rotate_board(-degrees)
+        self.update_location()
+
+    def shift_up(self):
+        degrees = 0
+        self.shift_direction(degrees)
+
+    def shift_left(self):
+        degrees = 90
+        self.shift_direction(degrees)
+
+    def shift_down(self):
+        degrees = 180
+        self.shift_direction(degrees)
+
+    def shift_right(self):
+        degrees = -90
+        self.shift_direction(degrees)
+
+
+class GAME_STATUS(Enum):
+    NOT_STARTED = 0
+    IN_PROGRESS = 1
+    WIN = 2
+    LOSE = 3
+
+class game_2048:
+
+    GAMEBOARD_ROW = 4
+    GAMEBOARD_COL = 4
+
+    def __init__(self): #sets an uninitialized state for game
+       
+        self.game_state = GAME_STATUS.NOT_STARTED
+        
 
     def init_game(self):
         self.game_state = GAME_STATUS.IN_PROGRESS
@@ -42,23 +184,6 @@ class game_2048:
         options = ["W - UP", "A - LEFT", "S - DOWN", "D - RIGHT"]
         print(" | ".join(options))
 
-    def check_matchingNeighbors(self): #TODO FIX does not detect matching pair on last column
-
-        for row in range(self.GAMEBOARD_ROW):
-            for col in range(self.GAMEBOARD_COL - 1): #does not check last column
-                current_value = self.game_board[row][col]
-                try:    #when checking cells in last col, checking the right neighbor will throw error and skip check for matching bottom neighbor
-                    if current_value == self.game_board[row][col+1] or current_value == self.game_board[row+1][col]: #check bottom and right values for match
-                        return True                                                                                   
-                except IndexError:                                                                                    
-                    continue
-
-        for row in range(self.GAMEBOARD_ROW - 1): #handle last column as special case
-            current_value = self.game_board[row][-1]
-            if current_value == self.game_board[row+1][-1]: #check current value's bottom neighbor
-                return True
-
-        return False
 
     def check_game_status(self):
         if self.recent_value == 2048:
@@ -99,112 +224,7 @@ class game_2048:
         elif self.game_state == GAME_STATUS.LOSE:
             print("You are outta moves! Try Again!")
 
-    def print_board(self):
-        row_line = "{:->34}".format("\n")       #len of row line is 33. set to 34 to accommadate newline esc seq
-        board = []                              #esc seq is right aligned
-        for i in range(game_2048.GAMEBOARD_ROW):#iterate thru each row in board
-            grid_row = "{}|{:^7}|{:^7}|{:^7}|{:^7}|".format(row_line,*self.game_board[i]) #use string format to insert row_line and four game_board values
-            board.append(grid_row)                                                        #use unpack operator to unpack each row in game_board
 
-        board.append(row_line)   #append last row_line onto bottom of board
-        board = "\n".join(board) 
-        print(board)
+ 
 
-    def place_item(self, num):
-        keylist = list(self.empty_locations.keys()) 
-        index = random.randint(0, len(keylist)-1) #pick random index from list of keys
-
-        key = keylist[index] #stores random key
-        location = self.empty_locations.pop(key) #remove selected key from empty locations
-                                                 #this prevents selecting a location that is filled when randomly choosing a key.
-        self.value_locations[key] = location
-        self.game_board[location[0]][location[1]] = num
-
-    def shift_values(self):
-        for col in range(game_2048.GAMEBOARD_COL): #iterate thru e/ column in gameboard
-            emptySpace_count = 0 #number of empty spaces in column
-            prev_value = None
-            prev_cell = None
-            for current_cell in range(game_2048.GAMEBOARD_ROW): #iterate thru e/ cell in current column
-                current_value = self.game_board[current_cell][col]
-
-                if current_value == '':  #if board location is empty add 1 to empty space
-                    emptySpace_count += 1
-
-                else:
-                    if current_value == prev_value:
-                        self.game_board[current_cell][col] = '' #remove current value from gameboard
-                        emptySpace_count += 1
-
-                        current_value *= 2
-                        self.game_board[prev_cell][col] = current_value #store double current_value at prev_value's location
-                        self.recent_value = current_value 
-                        prev_cell = None  #setting prev_cell and prev_value to none prevents anymore values from converging
-                        prev_value = None #only the current and prev values can converge during a shift nothing else
-                    elif emptySpace_count > 0:
-                        new_cell = current_cell - emptySpace_count  #shift current value based on num of empty spaces # MIGHT RESULT IN NEGATIVE VALUE 
-                        self.game_board[new_cell][col] = current_value #set new location to current value
-                        self.game_board[current_cell][col] = ''        #set old location to empty
-                        prev_cell = new_cell
-                        prev_value = current_value
-                    else: #if current value not patch prev_value and no emptyspaces -> update prev_cell and prev_value
-                        prev_cell = current_cell 
-                        prev_value = current_value
-
-    def update_locations(self): #dont like this method but will have to stick with it for now... :(
-        '''
-        after shifting we un-rotate to board to its normal position at 0 degrees. The coordinates of any changed cells  
-        in the gameboard will now be relative to the board at 0 degrees. This method iterates thru the board and updated the 
-        un-rotated coordinates of each cell in either empty_locations or value_locations
-        '''
-        self.empty_locations = dict()
-        self.value_locations = dict()
-        
-        for row in range(self.GAMEBOARD_ROW):
-            for col in range(self.GAMEBOARD_COL):
-                coord = (row, col)
-                if self.game_board[row][col] == '':
-                    self.empty_locations[coord] = coord
-                else:
-                    self.value_locations[coord] = coord
-
-    def shift_direction(self, degrees):
-        self.rotate_board(degrees)
-        self.shift_values()
-        self.rotate_board(-degrees)
-        self.update_locations() 
-
-    def shift_up(self):
-        degrees = 0
-        self.shift_direction(degrees)
-
-    def shift_left(self):
-        degrees = 90
-        self.shift_direction(degrees)
-
-    def shift_down(self):
-        degrees = 180
-        self.shift_direction(degrees)
-
-    def shift_right(self):
-        degrees = -90
-        self.shift_direction(degrees)
-
-    def rotate_board(self, degree):
-        degree_rotated = 0
-        rotated_board = self.game_board
-
-        if degree > 0: #for postive degrees: transpose then reverse
-            while degree_rotated != degree:
-                transpose_board = list(zip(*rotated_board))
-                rotated_board = [row[::-1] for row in transpose_board]
-                degree_rotated += 90
-
-        elif degree < 0: #for negative degrees: reverse then rotate
-            while degree_rotated != degree:
-                reverse_board = [row[::-1] for row in rotated_board]
-                rotated_board = list(zip(*reverse_board))
-                degree_rotated -= 90
-
-        self.game_board = [list(row) for row in rotated_board]
-        self.board_degrees = degree
+    
